@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<script>
+			function downloadJSON(){
+				if(!truckForm.jsonFileNameTxt.value){
+					alert("Enter value");
+				}else{
+				
+				}
+				
+			}
+		</script>
+	</head>
+	<body style="text-align:  center;">
+		<h1>Enter URL for Trucking List JSON File</h1>
+		<br>
+		<form name="truckForm" id="truckForm">
+			<input type="text" id="jsonFileNameTxt">
+			<br><br>	
+			<input type="button" onClick="downloadJSON()" value="Submit Query">
+		</form>
+	</body>
+</html>
