@@ -1,0 +1,147 @@
+<html>
+	<head>
+		<script>
+			function processData(){
+				if(!truckForm.jsonFileNameTxt.value){
+					alert("Enter value");
+				}else{
+					var jsonDoc=getJSONDoc();
+					parseJSON(jsonDoc);					
+				}
+				
+			}
+			
+			function getJSONDoc(){
+				var xmlHttpReq=new XMLHttpRequest();
+				xmlHttpReq.overrideMimeType("application/json");
+				xmlHttpReq.open("GET",truckForm.jsonFileNameTxt.value,false);
+				xmlHttpReq.send();
+				var jsonDoc = xmlHttpReq.responseText;
+				return jsonDoc;
+			}
+
+			function parseJSON(jsonDoc){
+				var obj=JSON.parse(jsonDoc);
+				createTruckWindow(obj);
+				//document.write(obj.Mainline.Table.Row[0].Company);
+				console.log(obj.Mainline.Table.Row[0].Company);
+			}
+
+			function createTruckWindow(jsonObj){
+				truckWin = window.open("", "Assignment4", "height=800,width=600");
+				var document=truckWin.document;
+				var body=truckWin.document.body;
+				
+				var table=document.createElement("table");
+				table.style.border="1px solid black";
+				//table rows
+				var row1=document.createElement("tr");
+				
+				var row1Col1=createCol("Parent Company",document,"th");
+				var row1Col2=createCol("Subsidiary Portfolio/Services",document,"th");
+				var row1Col3=createCol("HQ / Info",document,"th");
+				var row1Col4=createCol("Annual Revenue ($ million)",document,"th");
+				var row1Col5=createCol("HomePage",document,"th");
+				var row1Col6=createCol("Logo",document,"th");
+
+				row1.appendChild(row1Col1);row1.appendChild(row1Col2);
+				row1.appendChild(row1Col3);row1.appendChild(row1Col4);
+				row1.appendChild(row1Col5);row1.appendChild(row1Col6);				
+				
+				table.appendChild(row1);
+				
+				//data rows
+				var rowArray=jsonObj.Mainline.Table.Row;
+				for(i in rowArray){
+					var col1=createCol(rowArray[i].Company,document,"td");
+				    var col2=createCol(rowArray[i].Services,document,"td");
+					
+					var col3=createCol("",document,"td");
+					var hubArray=rowArray[i].Hubs.Hub;
+					var ulTag=document.createElement("ul");
+					for(j=0;j<hubArray.length;j++){						
+						var liTag=document.createElement("li");
+						var text=document.createTextNode(hubArray[j]);
+						if(j==0){
+							liTag.style.fontWeight="bold";
+						}
+						liTag.appendChild(text);
+						ulTag.appendChild(liTag);
+					}
+					col3.appendChild(ulTag);
+					
+					var col4=createCol(rowArray[i].Revenue,document,"td");
+					
+					var col5=createCol("",document,"td");
+					var anchorTag=document.createElement("a");
+					anchorTag.setAttribute("href",rowArray[i].HomePage);
+					anchorTag.appendChild(document.createTextNode(rowArray[i].HomePage));
+					col5.appendChild(anchorTag);
+					
+					var col6=createCol("",document,"td");
+					var imgTag=document.createElement("img");
+					imgTag.setAttribute("src",rowArray[i].Logo);
+					imgTag.setAttribute("width", "100");
+					imgTag.setAttribute("height", "70");
+					col6.appendChild(imgTag);
+
+					var row=document.createElement("tr");
+					row.appendChild(col1);row.appendChild(col2);
+					row.appendChild(col3);row.appendChild(col4);
+					row.appendChild(col5);row.appendChild(col6);
+					table.appendChild(row);
+				}
+
+				body.appendChild(table);
+				
+			}
+
+			function createCol(colText,document,rowType){
+				var col=document.createElement(rowType);
+				col.style.border="1px solid black";	
+				var text=document.createTextNode(colText);
+				col.appendChild(text);
+				return col;
+			}
+
+			function removeThis(){
+				truckWin = window.open("", "Assignment4", "height=800,width=600");
+				var document=truckWin.document;
+				var body=truckWin.document.body;
+				
+				var table=document.createElement("table");
+				table.style.border="1px solid black";
+				//table rows
+				var row1=document.createElement("tr");
+				
+				var row1Col1=document.createElement("th");
+				row1Col1.style.border="1px solid black";	
+				var text=document.createTextNode("Parent Company");
+				row1Col1.appendChild(text);
+				var row1Col2=document.createElement("th");
+				
+				row1Col2.style.border="1px solid black";	
+				text=document.createTextNode("Subsidiary Portfolio/Services");
+				row1Col2.appendChild(text);
+
+				createCol(rowText,document);
+
+				row1.appendChild(row1Col1);row1.appendChild(row1Col2);				
+				
+				table.appendChild(row1);
+				
+				body.appendChild(table);
+			}
+
+		</script>
+	</head>
+	<body style="text-align:  center;">
+		<h1>Enter URL for Trucking List JSON File</h1>
+		<br>
+		<form name="truckForm" id="truckForm" method="POST">
+			<input type="text" id="jsonFileNameTxt">
+			<br><br>	
+			<input type="button" onClick="processData()" value="Submit Query">
+		</form>
+	</body>
+</html>
