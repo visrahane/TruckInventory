@@ -6,7 +6,8 @@
 					alert("Enter value");
 				}else{
 					var jsonDoc=getJSONDoc();
-					parseJSON(jsonDoc);					
+					if(jsonDoc!=null)
+						parseJSON(jsonDoc);					
 				}
 				
 			}
@@ -15,16 +16,47 @@
 				var xmlHttpReq=new XMLHttpRequest();
 				xmlHttpReq.overrideMimeType("application/json");
 				xmlHttpReq.open("GET",truckForm.jsonFileNameTxt.value,false);
-				xmlHttpReq.send();
+				try{
+					xmlHttpReq.send();
+				}catch(ex){
+					alert("JSON file cannot be retrieved!");
+					return;
+				}
 				var jsonDoc = xmlHttpReq.responseText;
 				return jsonDoc;
 			}
 
 			function parseJSON(jsonDoc){
-				var obj=JSON.parse(jsonDoc);
-				createTruckWindow(obj);
-				//document.write(obj.Mainline.Table.Row[0].Company);
-				console.log(obj.Mainline.Table.Row[0].Company);
+				try{
+					var jsonObj=JSON.parse(jsonDoc);
+				}catch(err){
+					alert("JSON Parsing error, Json is not well formed");
+				}
+				
+				
+				
+				if(areValidHeaders(jsonObj)){
+					if(jsonObj.Mainline.Table.hasOwnProperty('Row')){
+						createTruckWindow(jsonObj);					
+					}else{
+						alert("No entries for truck companies available");
+					}
+				}else{
+					alert("Invalid Headers");
+				}
+				
+			}
+
+			function areValidHeaders(jsonObj){
+				var table=jsonObj.Mainline.Table.Header.Data;
+				//console.log(table.indexOf('Logo')>-1);
+				if(table.indexOf('Parent Company')>-1 && table.indexOf('Subsidiary Portfolio / Services')>-1 &&
+					table.indexOf('HQ / Info') >-1
+					&& table.indexOf('Annual Revenue ($ million)')>-1
+					&& table.indexOf('HomePage')>-1 && table.indexOf('Logo')>-1 ){
+						return true;
+				}
+				return false;
 			}
 
 			function createTruckWindow(jsonObj){
@@ -36,17 +68,11 @@
 				table.style.border="1px solid black";
 				//table rows
 				var row1=document.createElement("tr");
-				
-				var row1Col1=createCol("Parent Company",document,"th");
-				var row1Col2=createCol("Subsidiary Portfolio/Services",document,"th");
-				var row1Col3=createCol("HQ / Info",document,"th");
-				var row1Col4=createCol("Annual Revenue ($ million)",document,"th");
-				var row1Col5=createCol("HomePage",document,"th");
-				var row1Col6=createCol("Logo",document,"th");
-
-				row1.appendChild(row1Col1);row1.appendChild(row1Col2);
-				row1.appendChild(row1Col3);row1.appendChild(row1Col4);
-				row1.appendChild(row1Col5);row1.appendChild(row1Col6);				
+				var headerData=jsonObj.Mainline.Table.Header.Data;
+				for(k in headerData){
+					var col=createCol(headerData[k],document,"th");
+					row1.appendChild(col);
+				}						
 				
 				table.appendChild(row1);
 				
