@@ -35,15 +35,12 @@
 				
 				
 				
-				if(areValidHeaders(jsonObj)){
-					if(jsonObj.Mainline.Table.hasOwnProperty('Row')){
+				if(jsonObj.Mainline.Table.hasOwnProperty('Row')){
 						createTruckWindow(jsonObj);					
-					}else{
-						alert("No entries for truck companies available");
-					}
 				}else{
-					alert("Invalid Headers");
+						alert("No entries for truck companies available");
 				}
+				
 				
 			}
 
