@@ -57,9 +57,16 @@
 			}
 
 			function createTruckWindow(jsonObj){
-				truckWin = window.open("", "Assignment4", "height=800,width=600");
+				truckWin = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,height=800,width=600");
 				var document=truckWin.document;
-				var body=truckWin.document.body;
+				var head=document.head;
+				var title=document.createElement("title");
+				
+				var titleText = document.createTextNode("Trucking Companies");
+				title.appendChild(titleText);
+				head.appendChild(title);
+				
+				var body=document.body;
 				
 				var table=document.createElement("table");
 				table.style.border="1px solid black";
@@ -98,14 +105,16 @@
 					var col5=createCol("",document,"td");
 					var anchorTag=document.createElement("a");
 					anchorTag.setAttribute("href",rowArray[i].HomePage);
+					anchorTag.setAttribute("target","_self");
 					anchorTag.appendChild(document.createTextNode(rowArray[i].HomePage));
 					col5.appendChild(anchorTag);
 					
 					var col6=createCol("",document,"td");
 					var imgTag=document.createElement("img");
+					col6.setAttribute("align","center");
 					imgTag.setAttribute("src",rowArray[i].Logo);
-					imgTag.setAttribute("width", "100");
-					imgTag.setAttribute("height", "70");
+					imgTag.setAttribute("width", "100%");
+					imgTag.setAttribute("height", "80%");
 					col6.appendChild(imgTag);
 
 					var row=document.createElement("tr");
