@@ -15,9 +15,14 @@
 			function getJSONDoc(){
 				var xmlHttpReq=new XMLHttpRequest();
 				xmlHttpReq.overrideMimeType("application/json");
-				xmlHttpReq.open("GET",truckForm.jsonFileNameTxt.value,false);
+			
 				try{
+					xmlHttpReq.open("GET",truckForm.jsonFileNameTxt.value,false);					
 					xmlHttpReq.send();
+					if(xmlHttpReq.status==404){
+						alert("JSON file cannot be retrieved!");
+						return;
+					}
 				}catch(ex){
 					alert("JSON file cannot be retrieved!");
 					return;
@@ -33,12 +38,10 @@
 					alert("JSON Parsing error, Json is not well formed");
 				}
 				
-				
-				
 				if(jsonObj.Mainline.Table.hasOwnProperty('Row')){
-						createTruckWindow(jsonObj);					
+					createTruckWindow(jsonObj);					
 				}else{
-						alert("No entries for truck companies available");
+					alert("No entries for truck companies available");
 				}
 				
 				
